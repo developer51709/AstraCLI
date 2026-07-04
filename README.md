@@ -72,8 +72,8 @@ astra-cli/
 
 Clone the repository:
 ```bash
-git clone https://github.com/<your-username>/astra-cli
-cd astra-cli
+git clone https://github.com/developer51709/AstraCLI
+cd AstraCLI
 ```
 
 Install dependencies:
