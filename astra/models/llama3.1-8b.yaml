@@ -1,0 +1,5 @@
+name: llama3.1-8b
+provider: ollama
+parameters:
+  temperature: 0.7
+  max_tokens: 2048
