@@ -1,0 +1,80 @@
+astra-cli/
+│
+├── astra/                          # Main package
+│   ├── core/                       # Core engine logic
+│   │   ├── cli.py                  # CLI entrypoint
+│   │   ├── dispatcher.py           # Routes commands to providers/models/plugins
+│   │   ├── provider_manager.py     # Loads + manages AI providers
+│   │   ├── model_manager.py        # Loads + manages model configs
+│   │   ├── credential_manager.py   # Secure API key storage + retrieval
+│   │   ├── updater.py              # Self-update engine (GitHub fetch)
+│   │   ├── config.py               # Global config loader
+│   │   ├── logger.py               # Logging utilities
+│   │   └── exceptions.py           # Custom error types
+│   │
+│   ├── providers/                  # AI provider modules (external + local)
+│   │   ├── __init__.py
+│   │   ├── openai.py
+│   │   ├── groq.py
+│   │   ├── gemini.py
+│   │   ├── anthropic.py
+│   │   ├── mistral.py
+│   │   ├── ollama.py               # Local model provider
+│   │   └── llama_cpp.py            # Local GGUF model provider
+│   │
+│   ├── models/                     # Model configuration files
+│   │   ├── gpt-4o-mini.yaml
+│   │   ├── llama3.1-8b.yaml
+│   │   ├── gemini-flash.yaml
+│   │   └── mistral-small.yaml
+│   │
+│   ├── plugins/                    # Optional AI-powered tools
+│   │   ├── __init__.py
+│   │   ├── code_refactor.py        # AI-assisted code rewriting
+│   │   ├── bot_command_generator.py# Discord bot command generator
+│   │   ├── log_analyzer.py         # AI log summarizer
+│   │   └── prompt_tester.py        # Prompt testing sandbox
+│   │
+│   ├── utils/                      # Helper utilities
+│   │   ├── http.py
+│   │   ├── file.py
+│   │   ├── system.py
+│   │   └── sandbox.py              # Safe execution sandbox
+│   │
+│   ├── data/                       # Runtime data
+│   │   ├── cache/
+│   │   ├── logs/
+│   │   ├── settings.yaml
+│   │   └── credentials.json        # Encrypted API keys
+│   │
+│   └── __main__.py                 # Allows `python -m astra`
+│
+├── tests/                          # Unit + integration tests
+│   ├── test_providers.py
+│   ├── test_models.py
+│   ├── test_plugins.py
+│   ├── test_updater.py
+│   └── test_cli.py
+│
+├── scripts/                        # Developer scripts
+│   ├── build.py
+│   ├── install_local.py
+│   └── generate_docs.py
+│
+├── docs/                           # Documentation
+│   ├── providers.md
+│   ├── models.md
+│   ├── plugins.md
+│   ├── updater.md
+│   └── cli.md
+│
+├── examples/                       # Example configs + usage
+│   ├── example_prompt.txt
+│   ├── example_model.yaml
+│   └── example_plugin.py
+│
+├── LICENSE
+├── README.md
+├── pyproject.toml                  # Modern Python packaging
+├── requirements.txt                # Dependencies
+└── setup.cfg                       # Linting + formatting rules
