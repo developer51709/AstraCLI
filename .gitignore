@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pycache/
+
+# Distribution / packaging
+.Python
+build/
+dist/
+downloads/
+egg-info/
+.eggs/
+*.egg-info/
+.installed.cfg
+lib/
+lib64/
+parts/
+sdist/
+var/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Python Tools
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+*.cover
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+*.swp
+*.swo
+
+# AstraCLI runtime
+.astra/
