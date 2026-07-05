@@ -1,6 +1,7 @@
 import os
 import yaml
 from astra.core.config import load_config, update_config
+from astra.utils import logger
 
 class ModelManager:
     def __init__(self):
@@ -43,22 +44,22 @@ class ModelManager:
 
     def handle_cli(self, args):
         if not args:
-            print("Models:", ", ".join(self.models.keys()) if self.models else "(none)")
-            print("Active:", self.active_model or "(none)")
+            logger.info("Models: " + (", ".join(self.models.keys()) if self.models else "(none)"))
+            logger.info("Active: " + (self.active_model or "(none)"))
             return
 
         if args[0] == "set":
             if len(args) < 2:
-                print("Usage: astra models set <name>")
+                logger.info("Usage: astra models set <name>")
                 return
 
             name = args[1]
             if name in self.models:
                 self.active_model = name
                 self.save_active_model()
-                print(f"Active model set to {name}")
+                logger.success(f"Active model set to {name}")
             else:
-                print("Model not found.")
+                logger.error("Model not found.")
             return
 
-        print("AstraCLI: Unknown models command")
+        logger.error("AstraCLI: Unknown models command")

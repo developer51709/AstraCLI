@@ -1,5 +1,6 @@
 import os
 import json
+from astra.utils import logger
 
 class CredentialManager:
     def __init__(self):
@@ -23,9 +24,9 @@ class CredentialManager:
     def handle_cli(self, args):
         if not args or args[0] in ("list", "show"):
             if self.creds:
-                print("Stored credentials:", ", ".join(self.creds.keys()))
+                logger.info("Stored credentials: " + ", ".join(self.creds.keys()))
             else:
-                print("No stored credentials.")
+                logger.info("No stored credentials.")
             return
 
         if args[0] == "add":
@@ -37,21 +38,21 @@ class CredentialManager:
             key = args[2]
             self.creds[provider] = key
             self.save()
-            print(f"Credential added for {provider}")
+            logger.success(f"Credential added for {provider}")
             return
 
         if args[0] in ("remove", "rm"):
             if len(args) < 2:
-                print("Usage: astra creds remove <provider>")
+                logger.info("Usage: astra creds remove <provider>")
                 return
 
             provider = args[1]
             if provider in self.creds:
                 del self.creds[provider]
                 self.save()
-                print(f"Credential removed for {provider}")
+                logger.success(f"Credential removed for {provider}")
             else:
-                print("No credential found for", provider)
+                logger.error("No credential found for " + provider)
             return
 
         if args[0] == "get":
@@ -60,7 +61,7 @@ class CredentialManager:
                 return
 
             provider = args[1]
-            print(self.creds.get(provider, "No credential stored for this provider."))
+            logger.info(self.creds.get(provider, "No credential stored for this provider."))
             return
 
-        print("AstraCLI: Unknown creds command")
+        logger.error("AstraCLI: Unknown creds command")

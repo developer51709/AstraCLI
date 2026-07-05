@@ -1,5 +1,7 @@
 import os
 import importlib
+from astra.utils import logger
+
 
 class PluginLoader:
     def __init__(self):
@@ -20,22 +22,25 @@ class PluginLoader:
 
     def handle_cli(self, args, context=None):
         if not args:
-            print("Plugins:", ", ".join(self.plugins.keys()) if self.plugins else "(none)")
+            logger.info("Plugins: " + (", ".join(self.plugins.keys()) if self.plugins else "(none)"))
             return
 
         if args[0] == "run":
             if len(args) < 2:
-                print("Usage: astra plugins run <plugin> [args...]")
+                logger.info("Usage: astra plugins run <plugin> [args...]")
                 return
 
             plugin = args[1]
             if plugin in self.plugins:
                 plugin_context = context or {}
                 plugin_context["args"] = args[2:]
-                result = self.plugins[plugin](plugin_context)
-                print(result)
+                try:
+                    result = self.plugins[plugin](plugin_context)
+                    logger.info(result)
+                except Exception as exc:
+                    logger.error(f"Plugin {plugin} failed: {exc}")
             else:
-                print("Plugin not found.")
+                logger.error("Plugin not found.")
             return
 
-        print("AstraCLI: Unknown plugins command")
+        logger.error("AstraCLI: Unknown plugins command")

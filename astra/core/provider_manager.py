@@ -1,6 +1,7 @@
 import os
 import importlib
 from astra.core.config import load_config, update_config
+from astra.utils import logger
 
 class ProviderManager:
     def __init__(self):
@@ -47,26 +48,26 @@ class ProviderManager:
 
     def handle_cli(self, args):
         if not args:
-            print("Providers:", ", ".join(self.providers.keys()) if self.providers else "(none)")
-            print("Active:", self.active_provider or "(none)")
+            logger.info("Providers: " + (", ".join(self.providers.keys()) if self.providers else "(none)"))
+            logger.info("Active: " + (self.active_provider or "(none)"))
             return
 
         if args[0] in ("set", "use"):
             if len(args) < 2:
-                print("Usage: astra providers set <name>")
+                logger.info("Usage: astra providers set <name>")
                 return
 
             name = args[1]
             if name in self.providers:
                 self.active_provider = name
                 self.save_active_provider()
-                print(f"Active provider set to {name}")
+                logger.success(f"Active provider set to {name}")
             else:
-                print("Provider not found.")
+                logger.error("Provider not found.")
             return
 
         if args[0] in ("active", "current"):
-            print("Active provider:", self.active_provider or "(none)")
+            logger.info("Active provider: " + (self.active_provider or "(none)"))
             return
 
-        print("AstraCLI: Unknown providers command")
+        logger.error("AstraCLI: Unknown providers command")

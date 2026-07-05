@@ -86,6 +86,11 @@ Run AstraCLI:
 python -m astra
 ```
 
+Interactive mode
+```bash
+python -m astra interactive
+```
+
 ---
 
 ## 🧠 Usage Examples
@@ -183,6 +188,8 @@ Please follow the commit template and issue templates included in `.github/`.
 ---
 
 ## 📜 License
+This project uses a custom attribution license. See `LICENSE` for terms requiring credit to the original creator when the software is used or redistributed.
 
-MIT License.  
-See `LICENSE` for details.
+Documentation
+
+See the `docs/` folder for detailed guides including platform setup: [docs/README.md](docs/README.md)

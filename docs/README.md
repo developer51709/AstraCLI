@@ -7,3 +7,4 @@ This folder contains documentation for AstraCLI features and contributor workflo
 - `models.md` - Model configuration guide.
 - `plugins.md` - Plugin development guide.
 - `updater.md` - Self-update guide.
+ - `platforms.md` - Platform setup (Android/Windows/Linux/macOS).

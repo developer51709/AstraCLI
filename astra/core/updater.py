@@ -1,12 +1,14 @@
 import os
 import subprocess
+from astra.utils import logger
+
 
 class Updater:
     def update(self):
         repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         git_dir = os.path.join(repo_root, ".git")
         if not os.path.isdir(git_dir):
-            print("AstraCLI updater: git repository not found; update unavailable.")
+            logger.warn("AstraCLI updater: git repository not found; update unavailable.")
             return
 
         try:
@@ -18,9 +20,9 @@ class Updater:
                 check=True,
             )
             output = result.stdout.strip() or result.stderr.strip()
-            print(output or "AstraCLI updated successfully.")
+            logger.info(output or "AstraCLI updated successfully.")
         except FileNotFoundError:
-            print("AstraCLI updater: git is not installed.")
+            logger.error("AstraCLI updater: git is not installed.")
         except subprocess.CalledProcessError as exc:
             error = exc.stderr.strip() or exc.stdout.strip()
-            print("AstraCLI updater failed:", error)
+            logger.error("AstraCLI updater failed: " + (error or "unknown error"))
