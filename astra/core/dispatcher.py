@@ -21,7 +21,8 @@ def _print_help():
     logger.info("  astra plugins")
     logger.info("  astra plugins run <plugin> [args...]")
     logger.info("  astra creds")
-    logger.info("  astra creds add <provider> <key>")
+    logger.info("  astra creds add <provider>")
+    logger.info("  astra creds get <provider>")
     logger.info("  astra creds remove <provider>")
     logger.info("  astra update")
     logger.info("  astra help")
@@ -48,15 +49,21 @@ def _parse_ask_args(args):
 
 
 def dispatch(command, args):
+    """Run one command and return a process exit status (0 = success)."""
     if command in ("help", "-h", "--help"):
         _print_help()
-        return
+        return 0
 
     if command == "ask":
         provider_name, model_name, prompt = _parse_ask_args(args)
         if not prompt:
             logger.error("AstraCLI: ask command requires a prompt.")
-            return
+            return 1
+
+        if provider_name and provider_name not in provider_manager.providers:
+            available = ", ".join(sorted(provider_manager.providers)) or "(none)"
+            logger.error(f"AstraCLI: unknown provider '{provider_name}'. Available: {available}")
+            return 1
 
         provider = (
             provider_manager.get_provider(provider_name, credentials.creds)
@@ -65,32 +72,37 @@ def dispatch(command, args):
         )
         if provider is None:
             logger.error("AstraCLI: No provider available.")
-            return
+            return 1
+
+        if not getattr(provider, "configured", True):
+            name = provider_name or provider_manager.active_provider
+            needed = provider_manager.credential_name(name)
+            logger.error(
+                f"AstraCLI: provider '{name}' has no API key. "
+                f"Run 'astra creds add {needed}' and try again."
+            )
+            return 1
 
         model = model_manager.get_model(model_name) if model_name else model_manager.get_active_model()
         if model is None:
             logger.error("AstraCLI: No model available.")
-            return
+            return 1
 
         output = provider.generate(prompt, model)
         logger.info(output)
-        return
+        return 0
 
     if command == "update":
-        updater.update()
-        return
+        return updater.update()
 
     if command == "creds":
-        credentials.handle_cli(args)
-        return
+        return credentials.handle_cli(args)
 
     if command == "providers":
-        provider_manager.handle_cli(args)
-        return
+        return provider_manager.handle_cli(args)
 
     if command == "models":
-        model_manager.handle_cli(args)
-        return
+        return model_manager.handle_cli(args)
 
     if command == "plugins":
         context = {
@@ -98,7 +110,7 @@ def dispatch(command, args):
             "model": model_manager.active_model,
             "credentials": credentials.creds,
         }
-        plugin_loader.handle_cli(args, context)
-        return
+        return plugin_loader.handle_cli(args, context)
 
     logger.error(f"AstraCLI: Unknown command '{command}'")
+    return 1

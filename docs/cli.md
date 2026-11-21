@@ -44,12 +44,14 @@ astra plugins run <plugin> [args...]
 ```
 
 ### `astra creds`
-Manage stored credentials.
+Manage stored credentials. `add` prompts for the key instead of taking it on
+the command line, and `get` only shows a masked value.
 
 Usage:
 ```bash
 astra creds
-a stra creds add <provider> <key>
+astra creds add <provider>
+astra creds get <provider>
 astra creds remove <provider>
 ```
 

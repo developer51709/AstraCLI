@@ -9,7 +9,7 @@ class Updater:
         git_dir = os.path.join(repo_root, ".git")
         if not os.path.isdir(git_dir):
             logger.warn("AstraCLI updater: git repository not found; update unavailable.")
-            return
+            return 1
 
         try:
             result = subprocess.run(
@@ -21,8 +21,11 @@ class Updater:
             )
             output = result.stdout.strip() or result.stderr.strip()
             logger.info(output or "AstraCLI updated successfully.")
+            return 0
         except FileNotFoundError:
             logger.error("AstraCLI updater: git is not installed.")
+            return 1
         except subprocess.CalledProcessError as exc:
             error = exc.stderr.strip() or exc.stdout.strip()
             logger.error("AstraCLI updater failed: " + (error or "unknown error"))
+            return 1

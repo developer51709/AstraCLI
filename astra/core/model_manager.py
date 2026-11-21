@@ -15,16 +15,26 @@ class ModelManager:
         if not os.path.isdir(folder):
             return
 
-        for file in os.listdir(folder):
-            if file.endswith(".yaml"):
-                path = os.path.join(folder, file)
+        for file in sorted(os.listdir(folder)):
+            if not file.endswith(".yaml"):
+                continue
+
+            path = os.path.join(folder, file)
+            try:
                 with open(path, "r") as f:
                     data = yaml.safe_load(f) or {}
-                    if isinstance(data, dict) and data.get("name"):
-                        self.models[data["name"]] = data
+            except (yaml.YAMLError, OSError) as exc:
+                reason = (str(exc).strip().splitlines() or [type(exc).__name__])[0]
+                logger.warn(f"Skipping model config '{file}': {reason}")
+                continue
+
+            if isinstance(data, dict) and data.get("name"):
+                self.models[data["name"]] = data
+            else:
+                logger.warn(f"Skipping model config '{file}': missing 'name'.")
 
         if self.models and self.active_model is None:
-            self.active_model = list(self.models.keys())[0]
+            self.active_model = sorted(self.models)[0]
 
     def load_active_model(self):
         config = load_config()
@@ -44,22 +54,24 @@ class ModelManager:
 
     def handle_cli(self, args):
         if not args:
-            logger.info("Models: " + (", ".join(self.models.keys()) if self.models else "(none)"))
+            logger.info("Models: " + (", ".join(sorted(self.models)) if self.models else "(none)"))
             logger.info("Active: " + (self.active_model or "(none)"))
-            return
+            return 0
 
         if args[0] == "set":
             if len(args) < 2:
                 logger.info("Usage: astra models set <name>")
-                return
+                return 1
 
             name = args[1]
             if name in self.models:
                 self.active_model = name
                 self.save_active_model()
                 logger.success(f"Active model set to {name}")
-            else:
-                logger.error("Model not found.")
-            return
+                return 0
+
+            logger.error("Model not found.")
+            return 1
 
         logger.error("AstraCLI: Unknown models command")
+        return 1

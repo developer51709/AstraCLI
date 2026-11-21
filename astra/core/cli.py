@@ -24,6 +24,8 @@ def _repl():
     except KeyboardInterrupt:
         logger.info("Exiting interactive mode.")
 
+    return 0
+
 
 def _prompt():
     return "astra> "
@@ -32,14 +34,12 @@ def _prompt():
 def main():
     if len(sys.argv) < 2:
         logger.info("AstraCLI: No command provided.")
-        dispatch("help", [])
-        return
+        return dispatch("help", [])
 
     if sys.argv[1] in ("interactive", "-i", "--interactive"):
-        _repl()
-        return
+        return _repl()
 
     command = sys.argv[1]
     args = sys.argv[2:]
 
-    dispatch(command, args)
+    return dispatch(command, args)
