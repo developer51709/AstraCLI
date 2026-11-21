@@ -1,5 +1,7 @@
 import os
 
+from astra.core.exceptions import ProviderError
+
 try:
     import requests
 except Exception:
@@ -16,10 +18,10 @@ class Provider:
 
     def generate(self, prompt, model):
         if requests is None:
-            return "[astra] error: the 'requests' package is not installed."
+            raise ProviderError("the 'requests' package is not installed")
 
         url = f"{self.base}/chat/completions"
-        model_name = model.get("name") if isinstance(model, dict) else str(model)
+        model_name = (model.get("model") or model.get("name")) if isinstance(model, dict) else str(model)
         payload = {
             "model": model_name,
             "messages": [{"role": "user", "content": prompt}],
@@ -35,11 +37,14 @@ class Provider:
             resp = requests.post(url, json=payload, headers=headers, timeout=15)
             resp.raise_for_status()
             data = resp.json()
-            if "choices" in data and data["choices"]:
-                choice = data["choices"][0]
-                if isinstance(choice.get("message"), dict):
-                    return choice["message"].get("content", "")
-                return choice.get("text", "")
-            return str(data)
         except Exception as exc:
-            return f"[OpenAI-compatible provider error: {exc}]"
+            raise ProviderError(f"openai request failed: {exc}") from exc
+
+        choices = data.get("choices") if isinstance(data, dict) else None
+        if not choices:
+            raise ProviderError(f"openai response contained no choices: {data}")
+
+        choice = choices[0]
+        if isinstance(choice.get("message"), dict):
+            return choice["message"].get("content", "")
+        return choice.get("text", "")

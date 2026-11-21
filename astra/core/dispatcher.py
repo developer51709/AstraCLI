@@ -2,6 +2,7 @@ from astra.core.provider_manager import ProviderManager
 from astra.core.model_manager import ModelManager
 from astra.core.plugin_loader import PluginLoader
 from astra.core.credential_manager import CredentialManager
+from astra.core.exceptions import ProviderError
 from astra.core.updater import Updater
 from astra.utils import logger
 
@@ -88,7 +89,12 @@ def dispatch(command, args):
             logger.error("AstraCLI: No model available.")
             return 1
 
-        output = provider.generate(prompt, model)
+        try:
+            output = provider.generate(prompt, model)
+        except ProviderError as exc:
+            logger.error(f"AstraCLI: {exc}")
+            return 1
+
         logger.info(output)
         return 0
 
