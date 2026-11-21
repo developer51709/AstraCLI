@@ -91,6 +91,34 @@ Interactive mode
 python -m astra interactive
 ```
 
+### Install as a global command
+
+To run `astra` from any directory, use the bundled installer:
+
+```bash
+./scripts/install.sh
+astra ask "Explain this Python error."
+```
+
+The script checks your interpreter and dependencies, copies the package to
+`~/.local/share/astra`, and writes an `astra` launcher to `~/.local/bin`. Use
+`--home DIR` / `--bin-dir DIR` (or `ASTRA_HOME` / `ASTRA_BIN_DIR`) to install
+elsewhere; if that directory is not on your `PATH` the script says so and
+`--add-to-path` adds it to your shell profile. Remove it again with:
+
+```bash
+./scripts/uninstall.sh           # keeps your config and API keys
+./scripts/uninstall.sh --purge   # also deletes ~/.astra
+```
+
+Re-running the installer upgrades the installed copy: model configs you added
+to `~/.local/share/astra/astra/models/` are kept, while files shipped with the
+package (including `llama3.1-8b.yaml`) are replaced by the new versions. Other
+local edits to the installed copy are not preserved.
+
+These are POSIX shell scripts for Linux, macOS and Termux; on Windows, run
+`python -m astra` from a clone.
+
 ---
 
 ## 🧠 Usage Examples

@@ -14,7 +14,12 @@ def _repl():
                 break
             if not line:
                 continue
-            parts = shlex.split(line)
+            try:
+                parts = shlex.split(line)
+            except ValueError as exc:
+                logger.error(f"AstraCLI: {exc}")
+                continue
+
             if not parts:
                 continue
             cmd = parts[0]

@@ -6,8 +6,8 @@ from astra.utils import logger
 class Updater:
     def update(self):
         repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        git_dir = os.path.join(repo_root, ".git")
-        if not os.path.isdir(git_dir):
+        # .git is a directory in a normal clone and a file in a worktree or submodule
+        if not os.path.exists(os.path.join(repo_root, ".git")):
             logger.warn("AstraCLI updater: git repository not found; update unavailable.")
             return 1
 

@@ -75,6 +75,22 @@ def dispatch(command, args):
             logger.error("AstraCLI: No provider available.")
             return 1
 
+        model = model_manager.get_model(model_name) if model_name else model_manager.get_active_model()
+        if model is None:
+            logger.error("AstraCLI: No model available.")
+            return 1
+
+        declared = model.get("provider") if isinstance(model, dict) else None
+        in_use = provider_name or provider_manager.active_provider
+        if declared and declared != in_use:
+            model_id = model_name or model_manager.active_model
+            logger.error(
+                f"AstraCLI: model '{model_id}' is declared for provider '{declared}', "
+                f"but provider '{in_use}' is in use. Run with --provider {declared}, "
+                f"or add a model config with provider: {in_use}."
+            )
+            return 1
+
         if not getattr(provider, "configured", True):
             name = provider_name or provider_manager.active_provider
             needed = provider_manager.credential_name(name)
@@ -82,11 +98,6 @@ def dispatch(command, args):
                 f"AstraCLI: provider '{name}' has no API key. "
                 f"Run 'astra creds add {needed}' and try again."
             )
-            return 1
-
-        model = model_manager.get_model(model_name) if model_name else model_manager.get_active_model()
-        if model is None:
-            logger.error("AstraCLI: No model available.")
             return 1
 
         try:

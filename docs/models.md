@@ -28,3 +28,8 @@ parameters:
   temperature: 0.7
   max_tokens: 2048
 ```
+
+`provider` names the backend the model belongs to. `astra ask` refuses a pair
+that disagrees — a model declared for `ollama` will not be sent through
+`openai` — so use `--provider` to match the model, or add a second model config
+for the other provider.
